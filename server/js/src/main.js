@@ -1,6 +1,8 @@
 /*
  * --- THE LITTLE DOCTOR  --- 
  * 
+ * Authors: Moloch, Shubs, and Mandatory
+ * 
  * The Molecular Disruption Device, also known as the Molecular Detachment Device, M.D. Device, Doctor Device, 
  * or Little Doctor as a play on the acronym, was a powerful weapon designed and built by the International Fleet.
  * 
