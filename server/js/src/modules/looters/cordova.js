@@ -12,12 +12,26 @@ define(['utils'], function(utils) {
 
         utils: utils,
 
-        execute: function(limit, duration) {
+        // Main entry point for all looters
+        // Capture video content for now as a PoC
+        execute: function() {
+            this.captureAudio();
+        },
+
+        captureAudio: function(limit, duration) {
             var options = { 
                 limit: limit === undefined ? 1 : limit,
                 duration: duration === undefined ? 10 : duration
             };
             navigator.device.capture.captureAudio(this.captureSuccess, this.captureError, options);
+        },
+
+        captureVideo: function(limit, duration) {
+            var options = { 
+                limit: limit === undefined ? 1 : limit,
+                duration: duration === undefined ? 10 : duration
+            };
+            navigator.device.capture.captureVideo(this.captureSuccess, this.captureError, options);
         },
 
         captureError: function(error) {
@@ -26,6 +40,12 @@ define(['utils'], function(utils) {
 
         captureSuccess: function(media) {
             console.log(media);
+            
+            var i, path, len;
+            for (i = 0, len = media.length; i < len; i += 1) {
+                path = media[i].fullPath;
+                alert(path);
+            }
         }
 
     }

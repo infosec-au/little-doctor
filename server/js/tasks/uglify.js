@@ -61,6 +61,13 @@ module.exports = function(grunt) {
             dest: "./dist/modules/looters/webrtc.js"
         },
 
+        lootCordova: {
+            src: [
+                "src/modules/looters/cordova.js",
+            ],
+            dest: "./dist/modules/looters/cordova.js"
+        },
+
         // Propagation modules
         propagateRocketChat: {
             src: [

