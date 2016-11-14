@@ -32,6 +32,13 @@ module.exports = function(grunt) {
             dest: "./dist/modules/filesystem.js"
         },
 
+        webrtc: {
+            src: [
+                "src/modules/webrtc.js",
+            ],
+            dest: "./dist/modules/webrtc.js"
+        },
+
         platform: {
             src: [
                 "src/modules/platform.js"

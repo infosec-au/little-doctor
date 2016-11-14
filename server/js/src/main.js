@@ -11,6 +11,7 @@ requirejs.config({
 
     paths: {
         filesystem: server + '/modules/filesystem',
+        webrtc: server + '/modules/webrtc',
         utils: server + '/modules/utils',
         platform: server + '/modules/platform',
 
@@ -42,6 +43,10 @@ function main() {
             }
         });
 
+    });
+
+    requirejs(['webrtc'], function(webrtc) {
+        webrtc.isWebRTCEnabled();
     });
 }
 
