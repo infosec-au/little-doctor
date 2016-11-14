@@ -116,6 +116,8 @@ class LoginHandler(BaseRequestHandler):
         if user is not None:
             user_id = os.urandom(16).encode('hex')
             self.set_secure_cookie(USER_ID, user_id)
+        else:
+            logging.info("Known user: %r", self.get_current_user())
 
 
 class FileUploadHandler(BaseRequestHandler):

@@ -1,10 +1,11 @@
 "use strict";
 
 
-define(["utils"], function(utils) {
+define(["utils", "platform"], function(utils, platform) {
 
     return {
-    
+        
+        platform: platform,
         utils: utils,
     
         // Currently only detects unix-like file systems
@@ -37,7 +38,7 @@ define(["utils"], function(utils) {
             fileReq.send(null);
         },
 
-        getUsername: function(server, callbacks) {
+        getMacOSUsername: function(callbacks) {
             var path = 'file:///Library/Preferences/com.apple.loginwindow.plist';
             var _this = this;
             this.getFile(path, {
@@ -61,6 +62,20 @@ define(["utils"], function(utils) {
                 failure: function() {
                     console.log('Failed to get file data for: ' + path);
                     callbacks.failure();
+                }
+            });
+        },
+
+        getHomeDirectory: function(callbacks) {
+            var _this = this;
+            this.getMacOSUsername({
+                success: function(username) {
+                    var os = _this.platform.operatingSystem();
+                    if (os === 'macos') {
+                        callbacks.success('/Users/' + username);
+                    } else {
+                        callbacks.failure();
+                    }
                 }
             });
         }

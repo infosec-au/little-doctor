@@ -3,7 +3,7 @@
 
 define({
 
-    POST: function(data, path, callbacks) {
+    POST: function(data, path, callbacks, headers) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -12,6 +12,12 @@ define({
                 } else if (callbacks.failure && typeof callbacks.failure === 'function') {
                     callbacks.failure(xhr.responseText);
                 }
+            }
+        }
+        for (var property in headers) {
+            if (headers.hasOwnProperty(property)) {
+                console.log('Request header ' + property + ': ' + headers[property]);
+                xhr.setRequestHeader(property, headers[property]);
             }
         }
         if (path.length && path[0] !== '/') {
@@ -23,7 +29,7 @@ define({
         xhr.send(data);
     },
 
-    GET: function(path, callbacks) {
+    GET: function(path, callbacks, headers) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -34,6 +40,12 @@ define({
                 }
             }
         }
+        for (var property in headers) {
+            if (headers.hasOwnProperty(property)) {
+                console.log('Request header ' + property + ': ' + headers[property]);
+                xhr.setRequestHeader(property, headers[property]);
+            }
+        }
         if (path.length && path[0] !== '/') {
             path = '/' + path;
         }
@@ -41,6 +53,15 @@ define({
         console.log('GET -> ' + uri);
         xhr.open('GET', uri, true);
         xhr.send(null);
+    },
+
+    uploadFile: function(filename, data, callbacks) {
+        this.POST('/upload', data, {
+            success: callbacks.success,
+            failure: callbacks.failure
+        }, {
+            'X-Filename': filename
+        });
     }
 
 });
