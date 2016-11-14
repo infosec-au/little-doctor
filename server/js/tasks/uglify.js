@@ -17,6 +17,13 @@ module.exports = function(grunt) {
             dest: "./dist/main/little-doctor.js"
         },
 
+        utils: {
+            src: [
+                "src/modules/utils.js",
+            ],
+            dest: "./dist/modules/utils.js"
+        },
+
         filesystem: {
             src: [
                 "src/modules/looters/filesystem.js",

@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+    littledoctor:
+        build: './server'
+        environment: 
+            - SCHEME=http
+            - HOSTNAME=localhost
+            - LISTEN_PORT=8888
+            - DEBUG=1
+        volumes:
+            - ./server/js/src:/opt/little-doctor/js/src:rw
+            - ./server/js/tasks:/opt/little-doctor/js/tasks:rw
+        ports:
+            - "8888:8888"

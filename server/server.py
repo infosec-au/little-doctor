@@ -17,7 +17,7 @@ from uuid import uuid4
 from biplist import readPlist
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
-from tornado.options import define, options
+from tornado.options import options
 from tornado.web import Application, RequestHandler, StaticFileHandler
 
 USER_ID = "user_id"
@@ -44,7 +44,10 @@ class FileSystemDataStore(object):
 
     NAME = "filesystem"
     DATA_DIRECTORY = os.path.abspath(options.data_directory)
-    USERS_MAP = os.path.join(DATA_DIRECTORY, "users_map.json")
+
+    @classmethod
+    def user_ids(cls):
+        return os.listdir(cls.DATA_DIRECTORY)
 
     def __init__(self, user_id):
         if user_id is None:
@@ -53,20 +56,6 @@ class FileSystemDataStore(object):
         self.data_path = os.path.join(self.DATA_DIRECTORY, user_id)
         if not os.path.exists(self.data_path):
             os.mkdir(self.data_path)
-
-    @classmethod
-    def users_map(cls):
-        if not os.path.exists(cls.USERS_MAP):
-            return {}
-        with open(cls.USERS_MAP) as fp:
-            return json.loads(fp.read())
-
-    @classmethod
-    def add_user(cls, user_id, username):
-        users_map = cls.users_map()
-        users_map[user_id] = username
-        with open(cls.USERS_MAP, "w") as fp:
-            fp.write(json.dumps(users_map))
 
     def __getitem__(self, key):
         path = os.path.join(self.data_path, os.path.basename(key))
@@ -119,6 +108,17 @@ class BaseRequestHandler(RequestHandler):
             return FileSystemDataStore(self.get_current_user())
 
 
+class LoginHandler(BaseRequestHandler):
+
+    """ Just assigns a random id value so we can track the client """
+
+    def get(self):
+        user = self.get_current_user()
+        if user is not None:
+            user_id = os.urandom(16).encode('hex')
+            self.set_secure_cookie(USER_ID, user_id)
+
+
 class FileUploadHandler(BaseRequestHandler):
 
     @known_user
@@ -127,9 +127,12 @@ class FileUploadHandler(BaseRequestHandler):
         self.data_store[filename] = self.request.body
 
 
-class LoginPlistHandler(BaseRequestHandler):
+class PlistParserHandler(BaseRequestHandler):
 
-    """ Extracts data from the .plist and start a new session """
+    """
+    Extracts data from the .plist and start a new session, hopefully
+    this library isn't vulnerable to XXE, I never bothered testing it.
+    """
 
     PLIST_FILENAME = "com.apple.loginwindow.plist"
 
@@ -140,13 +143,9 @@ class LoginPlistHandler(BaseRequestHandler):
     def post(self):
         """ Login a new user """
         username = self.get_username_from_plist(self.request.body)
-        if username is not None:
-            user_id = str(uuid4())
-            data_store = FileSystemDataStore(user_id)
-            data_store.add_user(user_id, username)
-            data_store[self.PLIST_FILENAME] = self.request.body
-            self.set_secure_cookie(USER_ID, user_id)
-            self.write({"username": username})
+        if self.get_current_user() is not None:
+            self.data_store["username.txt"] = username
+        self.write({"username": username})
 
 
 class LootHandler(BaseRequestHandler):
@@ -160,7 +159,7 @@ class DownloadHandler(BaseRequestHandler):
     def get(self):
         user_id = self.get_query_argument("user_id")
         filename = self.get_query_argument("filename")
-        if user_id in FileSystemDataStore.users_map():
+        if user_id in FileSystemDataStore.user_ids():
             data_store = FileSystemDataStore(user_id)
             if filename in data_store:
                 self.set_header("Content-type", "application/octet-stream")
@@ -201,21 +200,28 @@ class LittleDoctorJsHandler(BaseRequestHandler):
     """
 
     _LITTLE_DOCTOR_JS = "js/dist/main/little-doctor.js"
+    _LITTLE_DOCTOR_JS_MAP = "js/dist/main/little-doctor.js.map"
 
-    def get(self, *args, **kwargs):
+    def get(self, *args):
         """ The modules are loaded via RequireJS this is just the main.js """
-        self.set_header("Content-Type", "application/javascript")
-        with open(self._LITTLE_DOCTOR_JS) as fp:
-            js = fp.read().replace("__LITTLE_DOCTOR_HOSTNAME__", options.hostname)
-            js = js.replace("__LITTLE_DOCTOR_LISTEN_PORT__", options.listen_port)
-            js = js.replace("__LITTLE_DOCTOR_SCHEME__", options.scheme)
-            self.write(js)
+        if len(args) and args[0].endswith(".map") and options.debug:
+            self.set_header("Content-Type", "text/plain")
+            with open(self._LITTLE_DOCTOR_JS_MAP) as fp:
+                self.write(fp.read())
+        else:
+            self.set_header("Content-Type", "application/javascript")
+            with open(self._LITTLE_DOCTOR_JS) as fp:
+                js = fp.read().replace("__LITTLE_DOCTOR_HOSTNAME__", options.hostname)
+                js = js.replace("__LITTLE_DOCTOR_LISTEN_PORT__", options.listen_port)
+                js = js.replace("__LITTLE_DOCTOR_SCHEME__", options.scheme)
+                self.write(js)
 
 
 LITTLE_DOCTOR_HANDLERS = [
     (r"/loot", LootHandler),
 
-    (r"/login/plist", LoginPlistHandler),
+    (r"/login", LoginHandler),
+    (r"/plist", PlistParserHandler),
     (r"/download", DownloadHandler),
     (r"/upload", FileUploadHandler),
 
@@ -237,7 +243,7 @@ def start_app():
     server.listen(options.listen_port)
     io_loop = IOLoop.instance()
     try:
-        logging.info("Starting Little Docter server on  %s://%s:%s",
+        logging.info("Starting Little Docter server on %s://%s:%s",
                      options.scheme, options.hostname, options.listen_port)
         io_loop.start()
     except KeyboardInterrupt:

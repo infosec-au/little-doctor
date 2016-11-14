@@ -4,14 +4,29 @@
 
 var scheme = '__LITTLE_DOCTOR_SCHEME__://';
 var hostname = '__LITTLE_DOCTOR_HOSTNAME__:__LITTLE_DOCTOR_LISTEN_PORT__';
+var server = scheme + hostname;
+
+
+
+function main() {
+    console.log('Little Doctor is examining the patient ...');
+    requirejs(['utils', 'filesystem'], function (utils, fs) {
+        
+    });
+}
 
 requirejs.config({
     paths: {
-        filesystem: scheme + hostname + '/modules/looters/filesystem'
+        filesystem: server + '/modules/looters/filesystem',
+        utils: server + '/modules/utils'
     }
 });
 
-requirejs(['filesystem'], function (fs) {
-    console.log('Requirejs module loaded');
-    fs.execute();
+requirejs(['utils'], function(utils) {
+    utils.GET('/login', {
+        success: main,
+        failure: function() {
+            console.error('Failed to login to server');
+        }
+    });
 });

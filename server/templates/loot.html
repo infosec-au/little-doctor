@@ -21,12 +21,15 @@
         </div>
         <div class="container">
             <div class="row">
-                {% for user_id, username in FileSystemDataStore.users_map().iteritems() %}
+                {% for user_id in FileSystemDataStore.user_ids() %}
                     {% set data_store = FileSystemDataStore(user_id) %}
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                           <i class="fa fa-fw fa-user"></i>
-                          {{ username }}
+                          {% if "username.txt" in data_store %}
+                                {{ data_store["username.txt"] }} - 
+                          {% end %}
+                          {{ user_id }}
                         </div>
                         <div class="panel-body">
                             <div class="btn-group-vertical" role="group" aria-label="...">

@@ -59,6 +59,6 @@ RUN grunt
 #
 # Define Entrypoint/etc.
 #
-VOLUME ["/opt/little-doctor/files"]
+VOLUME ["/opt/little-doctor/files", "/opt/little-docker/js/src", "/opt/little-doctor/js/tasks"]
 EXPOSE 8888
 ENTRYPOINT ["/opt/little-doctor/main.py"]

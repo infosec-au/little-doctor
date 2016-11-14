@@ -2,9 +2,6 @@
 
 module.exports = function(grunt) {
 
-    console.log('Scheme: ' + process.env.LITTLE_DOCTOR_SCHEME);
-    console.log('Hostname: ' + process.env.LITTLE_DOCTOR_HOSTNAME);
-
     // Project configuration
     grunt.initConfig({
 
