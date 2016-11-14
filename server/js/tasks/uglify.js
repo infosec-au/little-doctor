@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     var module = {
 
         options: {
-            banner: "/* <%= grunt.template.today(\"yyyy-mm-dd\") %> */\n",
+            banner: "/* Little Doctor <%= grunt.template.today(\"yyyy-mm-dd\") %> */\n",
             sourceMap: grunt.option("source-map", true)
         },
 
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
             src: [
                 "src/looters/filesystem.js",
             ],
-            dest: "./dist/looters/filesystem.min.js"
+            dest: "./dist/looters/filesystem.js"
         },
 
     };
