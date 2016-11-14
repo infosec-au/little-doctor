@@ -6,7 +6,6 @@ The Little Doctor
 # pylint: disable=C0103,C0111,R0201,W0223
 
 
-import json
 import gzip
 import logging
 import os
@@ -47,7 +46,7 @@ class FileSystemDataStore(object):
 
     @classmethod
     def user_ids(cls):
-        return os.listdir(cls.DATA_DIRECTORY)
+        return [_id for _id in os.listdir(cls.DATA_DIRECTORY) if os.path.isdir(_id)]
 
     def __init__(self, user_id):
         if user_id is None:
@@ -85,7 +84,7 @@ class FileSystemDataStore(object):
             yield (key, self[key],)
 
     def keys(self):
-        return os.listdir(self.data_path)
+        return [key for key in os.listdir(self.data_path) if os.path.isdir(key)]
 
 
 ####### Request Handlers #######
@@ -170,6 +169,7 @@ class DownloadHandler(BaseRequestHandler):
                 self.set_status(404)
         else:
             self.set_status(404)
+
 
 class FourOhFourHandler(BaseRequestHandler):
 

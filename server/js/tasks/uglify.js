@@ -31,6 +31,13 @@ module.exports = function(grunt) {
             dest: "./dist/modules/filesystem.js"
         },
 
+        platform: {
+            src: [
+                "src/modules/platform.js"
+            ],
+            dest: "./dist/modules/platform.js"
+        }
+
     };
 
     return module;

