@@ -81,8 +81,6 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
         messagesHistory: function(home) {
             // Library/Messages/chat.db <-- Chat database, and paths to attachments
             // Library/Messages/Attachments/<byte>/<byte>/<uuid>/<file>
-
-
             var _this = this;
             this.fs.getFile(home + '/Library/Messages/chat.db', {
                 success: function(data) {

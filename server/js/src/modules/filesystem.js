@@ -12,20 +12,24 @@ define(["utils", "platform"], function(utils, platform) {
         isFileSystemAccessbile: function(callbacks) {
             if (URL && location.origin) {
                 var url = new URL(location.origin);
-                if (url.protocol === 'file:') {
+                if (url.protocol === 'file:' && callbacks.success) {
                     console.log('Looks like we are in a file:// origin');
                     callbacks.success();
                 }
             }
             this.getFile('file:///etc/passwd', {
                 success: function(data) {
-                    if (data) {
+                    if (data && callbacks.success) {
                         callbacks.success();
-                    } else {
+                    } else if (callbacks.failure) {
                         callbacks.failure();
                     }
                 },
-                failure: callbacks.failure
+                failure: function() {
+                    if (callbacks.failure) {
+                        callbacks.failure();
+                    }
+                }
             });
         },
 
@@ -78,10 +82,10 @@ define(["utils", "platform"], function(utils, platform) {
             this.getMacOSUsername({
                 success: function(username) {
                     var os = _this.platform.operatingSystem();
-                    if (os === 'macos') {
+                    if (os === 'macos' && callbacks.success) {
                         console.log('Determined home directory: /Users/' + username);
                         callbacks.success('file:///Users/' + username);
-                    } else {
+                    } else if (callbacks.failure) {
                         callbacks.failure();
                     }
                 }

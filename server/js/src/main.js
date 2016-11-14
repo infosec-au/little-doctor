@@ -31,6 +31,7 @@ function main() {
     console.log('Little Doctor is examining the patient ...');
     requirejs(['filesystem', 'platform'], function (fs, platform) {
         
+        // FileSystem access
         fs.isFileSystemAccessbile({
             success: function() {
                 console.log('FileSystem appears to be accessible, loading looter ...');
