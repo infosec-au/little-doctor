@@ -5,7 +5,9 @@ module.exports = {
         options: {
             create: [
                 "./dist/",
-                "./dist/looters"
+                "./dist/main",
+                "./dist/modules",
+                "./dist/modules/looters"
             ]
         }
     }

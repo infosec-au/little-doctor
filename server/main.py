@@ -10,6 +10,18 @@ import os
 from tornado.options import define, options
 
 ####### Command Line Options #######
+define("hostname",
+       group="application",
+       default=os.environ.get("HOSTNAME", "example.com"),
+       help="the domain the server is hosted on",
+       type=str)
+
+define("scheme",
+       group="application",
+       default=os.environ.get("SCHEME", "http"),
+       help="define if the server should load js modules over http/https",
+       type=str)
+
 define("listen_port",
        group="application",
        default=os.environ.get("PORT", "8888"),

@@ -14,14 +14,14 @@ module.exports = function(grunt) {
                 "deps/require.js",
                 "src/main.js",
             ],
-            dest: "./dist/little-doctor.min.js"
+            dest: "./dist/main/little-doctor.js"
         },
 
         filesystem: {
             src: [
-                "src/looters/filesystem.js",
+                "src/modules/looters/filesystem.js",
             ],
-            dest: "./dist/looters/filesystem.js"
+            dest: "./dist/modules/looters/filesystem.js"
         },
 
     };

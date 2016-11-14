@@ -52,6 +52,7 @@ RUN pip install -r requirements.txt
 # Build JS Client
 #
 WORKDIR /opt/little-doctor/js/
+RUN npm install
 RUN grunt
 
 
