@@ -9,7 +9,7 @@ define({
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200 && callbacks.success ) {
                     callbacks.success(xhr.responseText);
-                } else if (callbacks.failure && typeof callbacks.failure === 'function') {
+                } else if (callbacks.failure) {
                     callbacks.failure(xhr.responseText);
                 }
             }

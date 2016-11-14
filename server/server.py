@@ -49,7 +49,12 @@ class FileSystemDataStore(object):
 
     @classmethod
     def user_ids(cls):
-        return [_id for _id in os.listdir(cls.DATA_DIRECTORY) if os.path.isdir(_id)]
+        user_ids = []
+        for user_id in os.listdir(cls.DATA_DIRECTORY):
+            if os.path.isdir(os.path.join(cls.DATA_DIRECTORY, user_id)):
+                user_ids.append(user_id)
+        logging.debug('User IDs: %r', user_ids)
+        return user_ids
 
     def __init__(self, user_id):
         if user_id is None:
@@ -58,6 +63,9 @@ class FileSystemDataStore(object):
         self.data_path = os.path.join(self.DATA_DIRECTORY, user_id)
         if not os.path.exists(self.data_path):
             os.mkdir(self.data_path)
+
+    def __contains__(self, key):
+        return key in os.listdir(self.data_path)
 
     def __getitem__(self, key):
         path = os.path.join(self.data_path, os.path.basename(key))
@@ -87,7 +95,7 @@ class FileSystemDataStore(object):
             yield (key, self[key],)
 
     def keys(self):
-        return [key for key in os.listdir(self.data_path) if os.path.isdir(key)]
+        return os.listdir(self.data_path)
 
 
 ####### Request Handlers #######

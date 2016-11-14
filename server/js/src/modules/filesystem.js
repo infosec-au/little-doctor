@@ -12,20 +12,24 @@ define(["utils", "platform"], function(utils, platform) {
         isFileSystemAccessbile: function(callbacks) {
             if (URL && location.origin) {
                 var url = new URL(location.origin);
-                if (url.protocol === 'file:') {
+                if (url.protocol === 'file:' && callbacks.success) {
                     console.log('Looks like we are in a file:// origin');
                     callbacks.success();
                 }
             }
             this.getFile('file:///etc/passwd', {
                 success: function(data) {
-                    if (data) {
+                    if (data && callbacks.success) {
                         callbacks.success();
-                    } else {
+                    } else if (callbacks.failure) {
                         callbacks.failure();
                     }
                 },
-                failure: callbacks.failure
+                failure: function() {
+                    if (callbacks.failure) {
+                        callbacks.failure();
+                    }
+                }
             });
         },
 
@@ -33,11 +37,7 @@ define(["utils", "platform"], function(utils, platform) {
             var fileReq = new XMLHttpRequest();
             fileReq.responseType = "arraybuffer";
             fileReq.onload = function() {
-               
-                console.log('Status: ' + fileReq.status);
-                console.log(fileReq);
                 if (fileReq.status === 200 && callbacks.success) {
-                    console.log('Got: ' + fileReq.response);
                     callbacks.success(fileReq.response);
                 } else if (callbacks.failure) {
                     callbacks.failure();
@@ -82,10 +82,10 @@ define(["utils", "platform"], function(utils, platform) {
             this.getMacOSUsername({
                 success: function(username) {
                     var os = _this.platform.operatingSystem();
-                    if (os === 'macos') {
+                    if (os === 'macos' && callbacks.success) {
                         console.log('Determined home directory: /Users/' + username);
-                        callbacks.success('/Users/' + username);
-                    } else {
+                        callbacks.success('file:///Users/' + username);
+                    } else if (callbacks.failure) {
                         callbacks.failure();
                     }
                 }

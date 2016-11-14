@@ -25,12 +25,14 @@ requirejs.config({
 
 });
 
+
 // Main entry point for little doctor
 function main() {
 
     console.log('Little Doctor is examining the patient ...');
     requirejs(['filesystem', 'platform'], function (fs, platform) {
         
+        // FileSystem access
         fs.isFileSystemAccessbile({
             success: function() {
                 console.log('FileSystem appears to be accessible, loading looter ...');
@@ -49,6 +51,7 @@ function main() {
         webrtc.isWebRTCEnabled();
     });
 }
+
 
 requirejs(['utils'], function(utils) {
     utils.GET('/login', {

@@ -26,11 +26,13 @@
                     {% set data_store = FileSystemDataStore(user_id) %}
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                          <i class="fa fa-fw fa-user"></i>
-                          {% if "username.txt" in data_store %}
-                                {{ data_store["username.txt"] }} - 
-                          {% end %}
-                          {{ user_id }}
+                            <i class="fa fa-fw fa-user"></i>
+                            {% if "username.txt" in data_store %}
+                                {{ data_store["username.txt"] }}
+                            {% else %}
+                                <i class="fa fa-fw fa-question"></i>
+                            {% end %}
+                            - {{ user_id }}
                         </div>
                         <div class="panel-body">
                             <div class="btn-group-vertical" role="group" aria-label="...">
