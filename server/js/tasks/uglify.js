@@ -26,9 +26,9 @@ module.exports = function(grunt) {
 
         filesystem: {
             src: [
-                "src/modules/looters/filesystem.js",
+                "src/modules/filesystem.js",
             ],
-            dest: "./dist/modules/looters/filesystem.js"
+            dest: "./dist/modules/filesystem.js"
         },
 
     };
