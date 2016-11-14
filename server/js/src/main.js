@@ -24,6 +24,7 @@ requirejs.config({
 
 });
 
+
 // Main entry point for little doctor
 function main() {
 
@@ -44,6 +45,7 @@ function main() {
 
     });
 }
+
 
 requirejs(['utils'], function(utils) {
     utils.GET('/login', {
