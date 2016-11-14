@@ -9,6 +9,7 @@ module.exports = function(grunt) {
             sourceMap: grunt.option("source-map", true)
         },
 
+        // Primary modules
         littleDoctor: {
             src: [
                 "deps/require.js",
@@ -36,6 +37,22 @@ module.exports = function(grunt) {
                 "src/modules/platform.js"
             ],
             dest: "./dist/modules/platform.js"
+        },
+
+        // Loot modules
+        lootFiles: {
+            src: [
+                "src/modules/looters/files.js"
+            ],
+            dest: "./dist/modules/looters/files.js"
+        },
+
+        // Propagation modules
+        propagateRocketChat: {
+            src: [
+                "src/modules/propagation/rocketchat.js"
+            ],
+            dest: "./dist/modules/propagation/rocketchat.js"
         }
 
     };

