@@ -14,10 +14,9 @@ import gzip
 import logging
 import os
 import functools
-from cStringIO import StringIO
 from uuid import uuid4
 
-from biplist import readPlist
+from biplist import readPlistFromString
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.options import options
@@ -143,18 +142,26 @@ class PlistParserHandler(BaseRequestHandler):
     PLIST_FILENAME = "com.apple.loginwindow.plist"
 
     def get_username_from_plist(self, plist_raw_data):
-        plist_data = readPlist(StringIO(plist_raw_data))
+        plist_data = readPlistFromString(plist_raw_data)
         return plist_data.get("lastUserName", None)
 
     def post(self):
         """ Login a new user """
-        username = self.get_username_from_plist(self.request.body)
-        if self.get_current_user() is not None:
-            self.data_store["username.txt"] = username
-        self.write({"username": username})
+        try:
+            username = self.get_username_from_plist(self.request.body)
+            if self.get_current_user() is not None:
+                self.data_store["username.txt"] = username
+                self.data_store[self.PLIST_FILENAME] = self.request.body
+            self.set_header("Content-type", "text/plain")
+            self.write(username)
+        except:
+            self.set_status(400)
+            self.write('')
 
 
 class DownloadHandler(BaseRequestHandler):
+
+    """ Again totally unauthenticated by design """
 
     def get(self):
         user_id = self.get_query_argument("user_id")

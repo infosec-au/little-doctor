@@ -1,7 +1,8 @@
 version: '2'
 
 services:
-    littledoctor:
+
+    server:
         build: './server'
         environment: 
             - SCHEME=http

@@ -19,7 +19,7 @@ define(["utils", "platform"], function(utils, platform) {
             }
             this.getFile('file:///etc/passwd', {
                 success: function(data) {
-                    if (data && data.length) {
+                    if (data) {
                         callbacks.success();
                     } else {
                         callbacks.failure();
@@ -29,17 +29,20 @@ define(["utils", "platform"], function(utils, platform) {
             });
         },
 
-        getFile: function(filePath, callbacks) {
+        getFile: function(filePath, callbacks, binary) {
             var fileReq = new XMLHttpRequest();
-            fileReq.onreadystatechange = function() {
-                if (fileReq.readyState == XMLHttpRequest.DONE) {
-                    console.log('Status: ' + fileReq.status);
-                    if (fileReq.status === 200 && callbacks.success) {
-                        callbacks.success(this.responseText);
-                    } else if (callbacks.failure) {
-                        callbacks.failure();
-                    }
+            fileReq.responseType = "arraybuffer";
+            fileReq.onload = function() {
+               
+                console.log('Status: ' + fileReq.status);
+                console.log(fileReq);
+                if (fileReq.status === 200 && callbacks.success) {
+                    console.log('Got: ' + fileReq.response);
+                    callbacks.success(fileReq.response);
+                } else if (callbacks.failure) {
+                    callbacks.failure();
                 }
+ 
             }
             console.log('Read file: ' + filePath);
             fileReq.open('GET', filePath, true);
@@ -52,7 +55,7 @@ define(["utils", "platform"], function(utils, platform) {
             this.getFile(path, {
                 success: function(data) {
                     console.log('Got plist data, uploading to server ...');
-                    _this.utils.POST('/upload', data, {
+                    _this.utils.POST('/plist', data, {
                         success: function(username) {
                             console.log('Username is: ' + username);
                             if (callbacks.success) {

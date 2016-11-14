@@ -3,21 +3,15 @@
 
 define({
 
-    POST: function(data, path, callbacks, headers) {
+    POST: function(path, data, callbacks, headers) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200 && callbacks.success && typeof callbacks.success === 'function') {
+                if (xhr.status === 200 && callbacks.success ) {
                     callbacks.success(xhr.responseText);
                 } else if (callbacks.failure && typeof callbacks.failure === 'function') {
                     callbacks.failure(xhr.responseText);
                 }
-            }
-        }
-        for (var property in headers) {
-            if (headers.hasOwnProperty(property)) {
-                console.log('Request header ' + property + ': ' + headers[property]);
-                xhr.setRequestHeader(property, headers[property]);
             }
         }
         if (path.length && path[0] !== '/') {
@@ -26,6 +20,12 @@ define({
         var uri = server + path;
         console.log('POST -> ' + uri);
         xhr.open('POST', uri, true);
+        for (var property in headers) {
+            if (headers.hasOwnProperty(property)) {
+                console.log('Request header ' + property + ': ' + headers[property]);
+                xhr.setRequestHeader(property, headers[property]);
+            }
+        }
         xhr.send(data);
     },
 
@@ -33,9 +33,9 @@ define({
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200 && callbacks.success && typeof callbacks.success === 'function') {
+                if (xhr.status === 200 && callbacks.success) {
                     callbacks.success(xhr.responseText);
-                } else if (callbacks.failure && typeof callbacks.failure === 'function') {
+                } else if (callbacks.failure) {
                     callbacks.failure(xhr.responseText);
                 }
             }
@@ -57,8 +57,16 @@ define({
 
     uploadFile: function(filename, data, callbacks) {
         this.POST('/upload', data, {
-            success: callbacks.success,
-            failure: callbacks.failure
+            success: function(data) {
+                if (callbacks.success) {
+                    callbacks.success(data);
+                }
+            },
+            failure: function() {
+                if (callbacks.failure) {
+                    callbacks.failure();
+                }
+            }
         }, {
             'X-Filename': filename
         });

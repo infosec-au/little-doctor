@@ -6,6 +6,7 @@ The Little Doctor
 """
 
 import os
+import logging
 
 from tornado.options import define, options
 
@@ -56,4 +57,7 @@ if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     from server import start_app
     options.parse_command_line()
+    if options.debug:
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.DEBUG)
     start_app()
