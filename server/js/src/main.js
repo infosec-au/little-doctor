@@ -11,13 +11,13 @@ var server = scheme + hostname;
 function main() {
     console.log('Little Doctor is examining the patient ...');
     requirejs(['utils', 'filesystem'], function (utils, fs) {
-        
+
     });
 }
 
 requirejs.config({
     paths: {
-        filesystem: server + '/modules/looters/filesystem',
+        filesystem: server + '/modules/filesystem',
         utils: server + '/modules/utils'
     }
 });
