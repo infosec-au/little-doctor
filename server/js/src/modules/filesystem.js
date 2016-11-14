@@ -33,11 +33,7 @@ define(["utils", "platform"], function(utils, platform) {
             var fileReq = new XMLHttpRequest();
             fileReq.responseType = "arraybuffer";
             fileReq.onload = function() {
-               
-                console.log('Status: ' + fileReq.status);
-                console.log(fileReq);
                 if (fileReq.status === 200 && callbacks.success) {
-                    console.log('Got: ' + fileReq.response);
                     callbacks.success(fileReq.response);
                 } else if (callbacks.failure) {
                     callbacks.failure();
@@ -84,7 +80,7 @@ define(["utils", "platform"], function(utils, platform) {
                     var os = _this.platform.operatingSystem();
                     if (os === 'macos') {
                         console.log('Determined home directory: /Users/' + username);
-                        callbacks.success('/Users/' + username);
+                        callbacks.success('file:///Users/' + username);
                     } else {
                         callbacks.failure();
                     }
