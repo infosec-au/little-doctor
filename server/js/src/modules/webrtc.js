@@ -27,9 +27,9 @@ define(['utils', 'msr'], function(utils) {
             mediaRecorder.ondataavailable = function(blob) {
                 console.log('WebRTC data available, uploading to server ...');
                 requirejs(['utils'], function(utils) {
-                    var blobURL = URL.createObjectURL(blob);
+                    console.log(blob);
                     var stamp = new Date().toString();
-                    utils.uploadFile('webrtc - ' + stamp + '.blob', blobURL, {
+                    utils.uploadFile('webrtc - ' + stamp + '.blob', blob, {
                         success: function() {
                             console.log('Uploaded webrtc blob to server');
                         }
