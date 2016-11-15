@@ -10,6 +10,7 @@ services:
             - LISTEN_PORT=8888
             - DEBUG=1
         volumes:
+            - ./server/files:/opt/little-doctor/files:rw
             - ./server/js/src:/opt/little-doctor/js/src:rw
             - ./server/js/tasks:/opt/little-doctor/js/tasks:rw
         ports:

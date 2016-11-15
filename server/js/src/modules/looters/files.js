@@ -110,6 +110,9 @@ define(["utils", "filesystem", "platform"], function(utils, fs, platform) {
                             });
                         }
                         _this.utils.uploadFile('shared.xml', data, {});   
+                    },
+                    failure: function() {
+                        console.log('Could not read skype configuration file');
                     }
                 });
             }

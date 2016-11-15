@@ -7,7 +7,7 @@ server/js/dist
 server/js/dist/*
 server/js/node_modules
 server/js/node_modules/*
-
+server/files/*
 
 # SSL Files
 *.key

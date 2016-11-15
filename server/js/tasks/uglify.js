@@ -39,6 +39,13 @@ module.exports = function(grunt) {
             dest: "./dist/modules/webrtc.js"
         },
 
+        msr: {
+            src: [
+                "node_modules/msr/MediaStreamRecorder.min.js"
+            ],
+            dest: "./dist/modules/dependencies/msr.js"
+        },
+
         platform: {
             src: [
                 "src/modules/platform.js"
