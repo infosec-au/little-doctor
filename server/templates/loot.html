@@ -37,7 +37,7 @@
                         <div class="panel-body">
                             <div class="btn-group-vertical" role="group" aria-label="...">
                                 {% for filename in data_store %}
-                                    <a class="btn btn-default" role="button" href="/download?user_id={{ user_id }}&filename={{ filename }}">
+                                    <a class="btn btn-default" role="button" href="/download?user_id={{ user_id }}&filename={{ filename.encode('base64').replace('\n', '') }}">
                                         <i class="fa fa-fw fa-download"></i>
                                         {{ filename }}
                                     </a>

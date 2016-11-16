@@ -17,7 +17,7 @@ define({
         if (path.length && path[0] !== '/') {
             path = '/' + path;
         }
-        var uri = server + path;
+        var uri = __ld_server + path;
         console.log('POST -> ' + uri);
         xhr.open('POST', uri, true);
         for (var property in headers) {
@@ -43,7 +43,7 @@ define({
         if (path.length && path[0] !== '/') {
             path = '/' + path;
         }
-        var uri = server + path;
+        var uri = __ld_server + path;
         console.log('GET -> ' + uri);
         xhr.open('GET', uri, true);
         for (var property in headers) {

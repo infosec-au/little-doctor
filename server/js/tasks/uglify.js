@@ -32,13 +32,6 @@ module.exports = function(grunt) {
             dest: "./dist/modules/filesystem.js"
         },
 
-        webrtc: {
-            src: [
-                "src/modules/webrtc.js",
-            ],
-            dest: "./dist/modules/webrtc.js"
-        },
-
         msr: {
             src: [
                 "node_modules/msr/MediaStreamRecorder.min.js"
@@ -59,6 +52,13 @@ module.exports = function(grunt) {
                 "src/modules/looters/files.js"
             ],
             dest: "./dist/modules/looters/files.js"
+        },
+
+        lootWebRtc: {
+            src: [
+                "src/modules/looters/webrtc.js",
+            ],
+            dest: "./dist/modules/looters/webrtc.js"
         },
 
         // Propagation modules

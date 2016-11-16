@@ -42,7 +42,13 @@ def known_user(method):
 ####### Persistent Data Store #######
 class FileSystemDataStore(object):
 
-    """ Dictionary-like persistent data store (filesystem) """
+    """
+    Dictionary-like persistent data store (filesystem)
+
+    This is a REALLY SHITTY data store, but I couldn't be bothered
+    to setup a database for this app, we'll fix all that when we integrate
+    with XSS Hunter eventually.
+    """
 
     NAME = "filesystem"
     DATA_DIRECTORY = os.path.abspath(options.data_directory)
@@ -173,7 +179,7 @@ class DownloadHandler(BaseRequestHandler):
 
     def get(self):
         user_id = self.get_query_argument("user_id")
-        filename = self.get_query_argument("filename")
+        filename = self.get_query_argument("filename").decode('base64')
         if user_id in FileSystemDataStore.user_ids():
             data_store = FileSystemDataStore(user_id)
             if filename in data_store:
