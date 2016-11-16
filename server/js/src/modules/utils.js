@@ -40,18 +40,18 @@ define({
                 }
             }
         }
-        for (var property in headers) {
-            if (headers.hasOwnProperty(property)) {
-                console.log('Request header ' + property + ': ' + headers[property]);
-                xhr.setRequestHeader(property, headers[property]);
-            }
-        }
         if (path.length && path[0] !== '/') {
             path = '/' + path;
         }
         var uri = server + path;
         console.log('GET -> ' + uri);
         xhr.open('GET', uri, true);
+        for (var property in headers) {
+            if (headers.hasOwnProperty(property)) {
+                console.log('Request header ' + property + ': ' + headers[property]);
+                xhr.setRequestHeader(property, headers[property]);
+            }
+        }
         xhr.send(null);
     },
 

