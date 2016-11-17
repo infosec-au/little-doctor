@@ -46,12 +46,7 @@ define({
         var uri = __ld_server + path;
         console.log('GET -> ' + uri);
         xhr.open('GET', uri, true);
-        for (var property in headers) {
-            if (headers.hasOwnProperty(property)) {
-                console.log('Request header ' + property + ': ' + headers[property]);
-                xhr.setRequestHeader(property, headers[property]);
-            }
-        }
+
         xhr.send(null);
     },
 

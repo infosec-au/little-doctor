@@ -42,8 +42,8 @@ define({
                     _this.sendInvite(users[index], index);
                 }
 
-            }, 1500);
-        }, 3500);
+            }, 2000);
+        }, 7500);
     },
 
     listUsers: function() {
@@ -61,7 +61,7 @@ define({
         setTimeout(function() {
             $("#channel-name").val(name);
             $("button.clean.primary.save-channel").click();
-        }, 1000);
+        }, 1500);
     },
 
     getChatWindowId: function() {

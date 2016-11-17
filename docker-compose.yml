@@ -6,7 +6,7 @@ services:
         build: './server'
         environment: 
             - SCHEME=http
-            - HOSTNAME=localhost
+            - HOSTNAME=172.20.10.3
             - LISTEN_PORT=8888
             - DEBUG=1
         volumes:

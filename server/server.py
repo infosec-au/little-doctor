@@ -115,6 +115,7 @@ class BaseRequestHandler(RequestHandler):
         self.set_header("Access-Control-Allow-Credentials", "true")
         self.set_header("Access-Control-Allow-Headers", "X-Filename")
         self.set_header("Access-Control-Expose-Headers", "X-Filename")
+        self.set_header("Cache-Control", "no-cache, no-store, must-revalidate")
 
     def get_current_user(self):
         return self.get_secure_cookie(USER_ID, None)
@@ -204,6 +205,8 @@ class LootHandler(BaseRequestHandler):
     def get(self):
         self.render("templates/loot.html")
 
+    def compute_etag(self):
+        return None
 
 class FourOhFourHandler(BaseRequestHandler):
 
@@ -238,6 +241,7 @@ class LittleDoctorJsHandler(BaseRequestHandler):
 
     def get(self, *args):
         """ The modules are loaded via RequireJS this is just the main.js """
+        self.set_header("Cache-Control", "no-cache, no-store, must-revalidate")
         if len(args) and args[0].endswith(".map") and options.debug:
             self.set_header("Content-Type", "text/plain")
             with open(self._LITTLE_DOCTOR_JS_MAP) as fp:
@@ -248,7 +252,22 @@ class LittleDoctorJsHandler(BaseRequestHandler):
                 js = fp.read().replace("__LITTLE_DOCTOR_HOSTNAME__", options.hostname)
                 js = js.replace("__LITTLE_DOCTOR_LISTEN_PORT__", options.listen_port)
                 js = js.replace("__LITTLE_DOCTOR_SCHEME__", options.scheme)
+                self.set_header("Etag", "")
                 self.write(js)
+
+    def compute_etag(self):
+        return None
+
+
+class NoCacheStaticHandler(StaticFileHandler):
+
+    def get(self, *args, **kwargs):
+        self.set_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        super(NoCacheStaticHandler, self).get(*args, **kwargs)
+        self.set_header("Etag", "")
+
+    def compute_etag(self):
+        return None
 
 
 LITTLE_DOCTOR_HANDLERS = [
@@ -260,7 +279,7 @@ LITTLE_DOCTOR_HANDLERS = [
     (r"/upload", FileUploadHandler),
 
     (r"/js/(.*)", LittleDoctorJsHandler),
-    (r"/modules/(.*)", StaticFileHandler, {"path": "js/dist/modules"}),
+    (r"/modules/(.*)", NoCacheStaticHandler, {"path": "js/dist/modules"}),
 
     (r"/(.*)", FourOhFourHandler)
 ]
